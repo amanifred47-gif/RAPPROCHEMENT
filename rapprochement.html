@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Rapprochement Universel</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e3a5f;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --gray: #6b7280;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --font: 'Sora', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 16px; }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 24px 16px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p { color: var(--text2); font-size: 0.8rem; margin-top: 4px; font-family: var(--mono); }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 16px;
+    gap: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text2);
+    font-family: var(--font);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .tab.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+  }
+
+  /* PANEL */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-family: var(--mono);
+  }
+
+  /* CONFIG ROW */
+  .config-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  @media(max-width:600px){ .config-row { grid-template-columns: 1fr 1fr; } }
+
+  .field label {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--text2);
+    margin-bottom: 4px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
+  }
+  .field textarea {
+    height: 180px;
+    resize: vertical;
+    font-size: 0.72rem;
+    line-height: 1.6;
+  }
+
+  /* SOURCE GRID */
+  .sources-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media(max-width:700px){ .sources-grid { grid-template-columns: 1fr; } }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,212,255,0.2);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,212,255,0.3); }
+  .btn-secondary { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .btn-red { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+  /* FILTERS */
+  .filters-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  @media(max-width:500px){ .filters-row { grid-template-columns: 1fr 1fr; } }
+
+  /* SUMMARY CARDS */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  @media(min-width:600px){ .summary-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-size: 1.6rem;
+    font-weight: 800;
+    font-family: var(--mono);
+    line-height: 1;
+  }
+  .stat-card .lbl { font-size: 0.65rem; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-card.ok .num { color: var(--green); }
+  .stat-card.diff .num { color: var(--yellow); }
+  .stat-card.miss .num { color: var(--red); }
+  .stat-card.total .num { color: var(--accent); }
+
+  /* RESULTS TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+  thead { position: sticky; top: 0; z-index: 5; }
+  thead th {
+    background: var(--surface2);
+    padding: 10px 8px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { border-bottom: 1px solid rgba(30,58,95,0.4); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(0,212,255,0.04); }
+  tbody td { padding: 8px; white-space: nowrap; font-family: var(--mono); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .badge-ok { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .badge-diff { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+  .badge-miss { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+  .badge-gray { background: rgba(107,114,128,0.15); color: var(--gray); border: 1px solid rgba(107,114,128,0.3); }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--text2);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+  .empty .icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-family: var(--font);
+    z-index: 100;
+    transition: transform 0.3s;
+    text-align: center;
+    max-width: 90vw;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* IMPORT ZONE */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+  }
+  .drop-zone:hover { border-color: var(--accent); background: rgba(0,212,255,0.04); }
+  .drop-zone input { display: none; }
+  .drop-zone p { font-size: 0.75rem; color: var(--text2); margin-top: 6px; }
+
+  /* GUIDE */
+  .guide-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .step-num {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+  .step-content h3 { font-size: 0.85rem; margin-bottom: 3px; }
+  .step-content p { font-size: 0.75rem; color: var(--text2); line-height: 1.5; }
+  .step-content code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+  }
+  .img-guide {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 8px 0;
+    background: var(--surface2);
+    padding: 12px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    font-family: var(--mono);
+  }
+
+  .alert {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🔄 Rapprochement Universel</h1>
+    <p>Détection intelligente · Import Excel · Export Excel</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('saisie')">✏️ Saisie</button>
+    <button class="tab" onclick="showTab('resultats')">📊 Résultats</button>
+    <button class="tab" onclick="showTab('guide')">📖 Guide GitHub</button>
+  </div>
+
+  <!-- PANEL: SAISIE -->
+  <div class="panel active" id="panel-saisie">
+
+    <div class="card">
+      <div class="card-title">⚙️ Configuration</div>
+      <div class="config-row">
+        <div class="field">
+          <label>Nom Source 1</label>
+          <input type="text" id="src1name" value="SOURCE 1">
+        </div>
+        <div class="field">
+          <label>Nom Source 2</label>
+          <input type="text" id="src2name" value="SOURCE 2">
+        </div>
+        <div class="field">
+          <label>Seuil similarité %</label>
+          <input type="number" id="threshold" value="85" min="50" max="100">
+        </div>
+      </div>
+    </div>
+
+    <div class="sources-grid">
+      <!-- SOURCE 1 -->
+      <div class="card">
+        <div class="card-title">📄 Source 1</div>
+        <div class="filters-row">
+          <div class="field">
+            <label>Date min</label>
+            <input type="text" id="dmin1" placeholder="JJ/MM/AAAA">
+          </div>
+          <div class="field">
+            <label>Date max</label>
+            <input type="text" id="dmax1" placeholder="JJ/MM/AAAA">
+          </div>
+          <div class="field">
+            <label>Référence</label>
+            <input type="text" id="ref1" placeholder="ex: PO-">
+          </div>
+        </div>
+        <div class="drop-zone" onclick="document.getElementById('file1').click()">
+          <input type="file" id="file1" accept=".xlsx,.xls,.csv" onchange="importFile(1)">
+          <div>📂 Importer fichier Excel/CSV</div>
+          <p>Cliquez ou glissez un fichier ici</p>
+        </div>
+        <div class="field" style="margin-top:8px">
+          <label>Ou collez vos données ici</label>
+          <textarea id="src1text" placeholder="PO-28127&#10;DDP ANANI 2025-09-11 50 3900000&#10;PO-28128 DDP DEPOT 2025-09-11 30 2340000"></textarea>
+        </div>
+      </div>
+
+      <!-- SOURCE 2 -->
+      <div class="card">
+        <div class="card-title">📄 Source 2</div>
+        <div class="filters-row">
+          <div class="field">
+            <label>Date min</label>
+            <input type="text" id="dmin2" placeholder="JJ/MM/AAAA">
+          </div>
+          <div class="field">
+            <label>Date max</label>
+            <input type="text" id="dmax2" placeholder="JJ/MM/AAAA">
+          </div>
+          <div class="field">
+            <label>Référence</label>
+            <input type="text" id="ref2" placeholder="ex: PO-">
+          </div>
+        </div>
+        <div class="drop-zone" onclick="document.getElementById('file2').click()">
+          <input type="file" id="file2" accept=".xlsx,.xls,.csv" onchange="importFile(2)">
+          <div>📂 Importer fichier Excel/CSV</div>
+          <p>Cliquez ou glissez un fichier ici</p>
+        </div>
+        <div class="field" style="margin-top:8px">
+          <label>Ou collez vos données ici</label>
+          <textarea id="src2text" placeholder="PO-28127 2025-09-11 50 3900000&#10;PO-28128 2025-09-11 30 2340000"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="rapprocher()">🔍 RAPPROCHER</button>
+      <button class="btn btn-secondary" onclick="loadSample()">📋 Données test</button>
+      <button class="btn btn-red" onclick="clearAll()">🗑️ Vider</button>
+    </div>
+  </div>
+
+  <!-- PANEL: RÉSULTATS -->
+  <div class="panel" id="panel-resultats">
+    <div class="summary-grid" id="summaryGrid">
+      <div class="stat-card total"><div class="num" id="s-total">0</div><div class="lbl">Total</div></div>
+      <div class="stat-card ok"><div class="num" id="s-ok">0</div><div class="lbl">✅ OK (≤100)</div></div>
+      <div class="stat-card diff"><div class="num" id="s-diff">0</div><div class="lbl">⚠️ Écarts</div></div>
+      <div class="stat-card miss"><div class="num" id="s-miss">0</div><div class="lbl">❌ Manquants</div></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-green" onclick="exportExcel()">💾 Exporter Excel</button>
+      <button class="btn btn-secondary" onclick="exportCSV()">📄 Exporter CSV</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Source</th>
+            <th>Description</th>
+            <th>Date S1</th>
+            <th>Date S2</th>
+            <th>Qté S1</th>
+            <th>Qté S2</th>
+            <th>Montant S1</th>
+            <th>Montant S2</th>
+            <th>Écart</th>
+            <th>Sim%</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="resultsBody">
+          <tr>
+            <td colspan="12">
+              <div class="empty">
+                <div class="icon">🔍</div>
+                Lancez un rapprochement pour voir les résultats
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PANEL: GUIDE GITHUB -->
+  <div class="panel" id="panel-guide">
+    <div class="card">
+      <div class="card-title">📖 Installer sur Android — Guide Complet</div>
+      <div class="alert">🎯 En suivant ce guide, l'application s'installe sur votre téléphone comme une vraie app — gratuitement, sans Play Store !</div>
+
+      <div class="guide-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Créer un compte GitHub gratuit</h3>
+          <p>Allez sur <code>github.com</code> → Cliquez <strong>"Sign up"</strong> → Entrez votre email, un mot de passe, un nom d'utilisateur → Vérifiez votre email.</p>
+          <div class="img-guide">🌐 github.com → bouton vert "Sign up" en haut à droite</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Créer un nouveau dépôt (repository)</h3>
+          <p>Une fois connecté → Cliquez le <strong>"+"</strong> en haut à droite → <strong>"New repository"</strong> → Nom : <code>rapprochement</code> → Cochez <strong>"Public"</strong> → Cliquez <strong>"Create repository"</strong>.</p>
+          <div class="img-guide">➕ New repository → Name: rapprochement → ⚪ Public → Create repository</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Télécharger et uploader le fichier</h3>
+          <p>1. Téléchargez d'abord le fichier <code>rapprochement.html</code> depuis ce chat.<br>
+          2. Dans votre dépôt GitHub, cliquez <strong>"Add file"</strong> → <strong>"Upload files"</strong>.<br>
+          3. Glissez le fichier <code>rapprochement.html</code>.<br>
+          4. <strong>IMPORTANT</strong> : Renommez-le en <code>index.html</code> (cliquez sur le nom du fichier pour renommer).<br>
+          5. Cliquez <strong>"Commit changes"</strong>.</p>
+          <div class="img-guide">Add file → Upload files → Glisser rapprochement.html → Renommer en index.html → Commit changes</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Activer GitHub Pages (mise en ligne gratuite)</h3>
+          <p>Dans votre dépôt → Cliquez <strong>"Settings"</strong> (⚙️ en haut) → Faites défiler jusqu'à <strong>"Pages"</strong> dans le menu gauche → Sous "Branch", sélectionnez <code>main</code> → Cliquez <strong>"Save"</strong>.<br><br>
+          Attendez 2 minutes → Votre app sera disponible à :<br>
+          <code>https://VOTRE_NOM.github.io/rapprochement</code></p>
+          <div class="img-guide">Settings → Pages → Branch: main → Save → Attendre 2 min</div>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Installer sur Android (comme une vraie app !)</h3>
+          <p>Sur votre téléphone Android :<br>
+          1. Ouvrez <strong>Chrome</strong><br>
+          2. Allez sur votre URL : <code>https://VOTRE_NOM.github.io/rapprochement</code><br>
+          3. Appuyez sur les <strong>3 points</strong> (⋮) en haut à droite<br>
+          4. Appuyez <strong>"Ajouter à l'écran d'accueil"</strong><br>
+          5. Confirmez → L'icône apparaît sur votre écran d'accueil ! 🎉</p>
+          <div class="img-guide">Chrome → ⋮ → "Ajouter à l'écran d'accueil" → Ajouter</div>
+        </div>
+      </div>
+
+      <div class="alert" style="margin-top:16px; background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.3); color: var(--green);">
+        ✅ L'application fonctionne même sans connexion internet une fois installée !<br>
+        Tout fonctionne directement sur votre téléphone : import, calcul, export Excel.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== UTILS ====================
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const tabs = ['saisie','resultats','guide'];
+  const idx = tabs.indexOf(name);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+function toast(msg, duration=2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+// ==================== PARSING ====================
+function extractNumbers(text) {
+  return (text.match(/\d{3,}/g) || []);
+}
+
+function normalizeCode(text) {
+  if (!text) return '';
+  text = String(text).toUpperCase().trim();
+  const patterns = [
+    [/PO-?(\d+)/i, 1],
+    [/BC\s*N°?\s*PO-?(\d+)/i, 1],
+    [/BC\s*N°?\s*(\d+)/i, 1],
+    [/FACTURE-?(\d{4})-?(\d{3})/i, null],
+    [/CMD-?(\d+)/i, 1],
+    [/REF-?([A-Z0-9]+)/i, 1],
+  ];
+  for (const [re, grp] of patterns) {
+    const m = text.match(re);
+    if (m) {
+      if (grp === null) return m[1]+'-'+m[2];
+      return m[grp];
+    }
+  }
+  const nums = extractNumbers(text);
+  if (nums.length) return nums[0];
+  const words = text.match(/[A-Z0-9]{3,}/g);
+  return words ? words[0] : text;
+}
+
+function extractDate(text) {
+  const patterns = [
+    [/(\d{2}\/\d{2}\/\d{4})/, 'dd/mm/yyyy'],
+    [/(\d{4}-\d{2}-\d{2})/, 'yyyy-mm-dd'],
+    [/(\d{2}-\d{2}-\d{4})/, 'dd-mm-yyyy'],
+  ];
+  for (const [re, fmt] of patterns) {
+    const m = text.match(re);
+    if (m) {
+      try {
+        let d;
+        if (fmt === 'dd/mm/yyyy') {
+          const [day,mon,yr] = m[1].split('/');
+          d = `${day}/${mon}/${yr}`;
+        } else if (fmt === 'yyyy-mm-dd') {
+          const [yr,mon,day] = m[1].split('-');
+          d = `${day}/${mon}/${yr}`;
+        } else {
+          const [day,mon,yr] = m[1].split('-');
+          d = `${day}/${mon}/${yr}`;
+        }
+        return d;
+      } catch(e) { continue; }
+    }
+  }
+  return '';
+}
+
+function extractQtyAndAmount(text) {
+  let clean = text
+    .replace(/\d{2}\/\d{2}\/\d{4}/g,'')
+    .replace(/\d{4}-\d{2}-\d{2}/g,'')
+    .replace(/\d{2}-\d{2}-\d{4}/g,'');
+  const nums = (clean.replace(/[,\.]/g,'').match(/\d+/g) || []).filter(n => n.length <= 10);
+  if (nums.length >= 2) return [parseInt(nums[nums.length-2])||0, parseFloat(nums[nums.length-1])||0];
+  if (nums.length === 1) return [0, parseFloat(nums[0])||0];
+  return [0, 0];
+}
+
+function parseLine(line) {
+  if (!line.trim()) return null;
+  const date = extractDate(line);
+  const [qty, amount] = extractQtyAndAmount(line);
+  const code = normalizeCode(line);
+  let desc = line.trim();
+  desc = desc.replace(/\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}|\d{2}-\d{2}-\d{4}/g,'').replace(/\s+/g,' ').trim();
+  return { code, description: desc, quantity: qty, amount, date, original: line.trim() };
+}
+
+function parseData(text) {
+  const data = {};
+  for (const line of text.trim().split('\n')) {
+    if (!line.trim()) continue;
+    const p = parseLine(line);
+    if (!p || !p.code) continue;
+    if (data[p.code]) {
+      data[p.code].amount += p.amount;
+      data[p.code].quantity += p.quantity;
+      data[p.code].description += ' + ' + p.description;
+    } else {
+      data[p.code] = { ...p };
+    }
+  }
+  return data;
+}
+
+function applyFilters(data, num) {
+  const dminStr = document.getElementById('dmin'+num).value.trim();
+  const dmaxStr = document.getElementById('dmax'+num).value.trim();
+  const ref = document.getElementById('ref'+num).value.trim().toUpperCase();
+
+  const parseDate = s => {
+    if (!s) return null;
+    const [d,m,y] = s.split('/');
+    return new Date(+y, +m-1, +d);
+  };
+  const dmin = parseDate(dminStr);
+  const dmax = parseDate(dmaxStr);
+
+  const out = {};
+  for (const [code, item] of Object.entries(data)) {
+    let ok = true;
+    if (ref && !code.includes(ref) && !item.description.toUpperCase().includes(ref)) ok = false;
+    if (ok && item.date && (dmin || dmax)) {
+      const [dd,mm,yy] = item.date.split('/');
+      const d = new Date(+yy, +mm-1, +dd);
+      if (dmin && d < dmin) ok = false;
+      if (dmax && d > dmax) ok = false;
+    }
+    if (ok) out[code] = item;
+  }
+  return out;
+}
+
+function similarity(a, b) {
+  if (!a || !b) return 0;
+  a = a.toUpperCase(); b = b.toUpperCase();
+  if (a === b) return 100;
+  const longer = a.length > b.length ? a : b;
+  const shorter = a.length > b.length ? b : a;
+  if (!longer.length) return 100;
+  let hits = 0;
+  for (let i = 0; i <= longer.length - shorter.length; i++) {
+    if (longer.substring(i, i + shorter.length) === shorter) { hits = shorter.length; break; }
+  }
+  // Simple LCS approximation
+  let lcs = 0;
+  const dp = Array.from({length: a.length+1}, () => new Array(b.length+1).fill(0));
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      if (a[i-1] === b[j-1]) dp[i][j] = dp[i-1][j-1] + 1, lcs = Math.max(lcs, dp[i][j]);
+  return (2 * lcs / (a.length + b.length)) * 100;
+}
+
+function findBestMatch(code, targetData, threshold) {
+  if (!code || !Object.keys(targetData).length) return [null, 0];
+  let bestCode = null, bestSim = 0;
+  for (const tc of Object.keys(targetData)) {
+    if (code === tc) return [tc, 100];
+    let s = 0;
+    if (code.includes(tc) || tc.includes(code)) {
+      s = Math.min(code.length, tc.length) / Math.max(code.length, tc.length) * 100;
+    } else {
+      s = similarity(code, tc);
+    }
+    if (s > bestSim) { bestSim = s; bestCode = tc; }
+  }
+  return bestSim >= threshold ? [bestCode, bestSim] : [null, 0];
+}
+
+// ==================== CORE ====================
+let RESULTS = [];
+
+function rapprocher() {
+  const s1text = document.getElementById('src1text').value.trim();
+  const s2text = document.getElementById('src2text').value.trim();
+  if (!s1text || !s2text) { toast('⚠️ Veuillez saisir les données des deux sources'); return; }
+
+  const threshold = parseFloat(document.getElementById('threshold').value) || 85;
+  const src1name = document.getElementById('src1name').value || 'SOURCE 1';
+  const src2name = document.getElementById('src2name').value || 'SOURCE 2';
+
+  const raw1 = parseData(s1text);
+  const raw2 = parseData(s2text);
+  const s1 = applyFilters(raw1, 1);
+  const s2 = applyFilters(raw2, 2);
+
+  RESULTS = [];
+  let okC=0, diffC=0, missC=0;
+  const processed = new Set();
+  const allCodes = new Set([...Object.keys(s1), ...Object.keys(s2)]);
+
+  for (const code of [...allCodes].sort()) {
+    if (processed.has(code)) continue;
+    processed.add(code);
+
+    const in1 = code in s1, in2 = code in s2;
+
+    if (in1 && in2) {
+      const d1 = s1[code], d2 = s2[code];
+      const diff = d1.amount - d2.amount;
+      const ok = Math.abs(diff) <= 100;
+      ok ? okC++ : diffC++;
+      RESULTS.push({
+        code, source: `${src1name}+${src2name}`,
+        description: d1.description,
+        date1: d1.date, date2: d2.date,
+        qty1: d1.quantity, qty2: d2.quantity,
+        amt1: d1.amount, amt2: d2.amount,
+        diff, sim: 100,
+        status: ok ? 'CORRESPONDANCE OK' : `DIFFÉRENCE: ${diff>0?'+':''}${fmt(diff)}`,
+        type: ok ? 'ok' : 'diff'
+      });
+
+    } else if (in1) {
+      const [mc, ms] = findBestMatch(code, s2, threshold);
+      if (mc && !processed.has(mc)) {
+        processed.add(mc);
+        const d1 = s1[code], d2 = s2[mc];
+        const diff = d1.amount - d2.amount;
+        const ok = Math.abs(diff) <= 100;
+        ok ? okC++ : diffC++;
+        RESULTS.push({
+          code: `${code}→${mc}`, source: `${src1name}+${src2name}`,
+          description: d1.description,
+          date1: d1.date, date2: d2.date,
+          qty1: d1.quantity, qty2: d2.quantity,
+          amt1: d1.amount, amt2: d2.amount,
+          diff, sim: ms,
+          status: ok ? 'CORRESPONDANCE OK' : `DIFFÉRENCE: ${diff>0?'+':''}${fmt(diff)}`,
+          type: ok ? 'ok' : 'diff'
+        });
+      } else {
+        const d1 = s1[code];
+        missC++;
+        RESULTS.push({
+          code, source: `${src1name} seul`,
+          description: d1.description,
+          date1: d1.date, date2: '',
+          qty1: d1.quantity, qty2: 0,
+          amt1: d1.amount, amt2: 0,
+          diff: d1.amount, sim: 0,
+          status: `NON TROUVÉ DANS ${src2name}`,
+          type: 'miss'
+        });
+      }
+
+    } else if (in2) {
+      const d2 = s2[code];
+      missC++;
+      RESULTS.push({
+        code, source: `${src2name} seul`,
+        description: d2.description,
+        date1: '', date2: d2.date,
+        qty1: 0, qty2: d2.quantity,
+        amt1: 0, amt2: d2.amount,
+        diff: -d2.amount, sim: 0,
+        status: `NON TROUVÉ DANS ${src1name}`,
+        type: 'miss'
+      });
+    }
+  }
+
+  // Update summary
+  document.getElementById('s-total').textContent = RESULTS.length;
+  document.getElementById('s-ok').textContent = okC;
+  document.getElementById('s-diff').textContent = diffC;
+  document.getElementById('s-miss').textContent = missC;
+
+  // Render table
+  const tbody = document.getElementById('resultsBody');
+  if (!RESULTS.length) {
+    tbody.innerHTML = '<tr><td colspan="12"><div class="empty"><div class="icon">😕</div>Aucun résultat trouvé</div></td></tr>';
+  } else {
+    tbody.innerHTML = RESULTS.map(r => {
+      const badge = r.type === 'ok' ? 'badge-ok' : r.type === 'diff' ? 'badge-diff' : 'badge-miss';
+      const badgeText = r.type === 'ok' ? '✅ OK' : r.type === 'diff' ? '⚠️ ÉCART' : '❌ MANQUANT';
+      return `<tr>
+        <td style="color:var(--accent);font-weight:700">${r.code}</td>
+        <td style="color:var(--text2);font-size:0.65rem">${r.source}</td>
+        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis" title="${r.description}">${r.description.substring(0,25)}${r.description.length>25?'…':''}</td>
+        <td>${r.date1||'-'}</td>
+        <td>${r.date2||'-'}</td>
+        <td style="text-align:right">${r.qty1>0?r.qty1:'-'}</td>
+        <td style="text-align:right">${r.qty2>0?r.qty2:'-'}</td>
+        <td style="text-align:right">${r.amt1>0?fmt(r.amt1):'-'}</td>
+        <td style="text-align:right">${r.amt2>0?fmt(r.amt2):'-'}</td>
+        <td style="text-align:right;color:${r.diff>100?'var(--yellow)':r.diff<-100?'var(--red)':'var(--green)'}">${r.diff!==0?(r.diff>0?'+':'')+fmt(r.diff):'-'}</td>
+        <td style="text-align:right">${r.sim>0?r.sim.toFixed(0)+'%':'-'}</td>
+        <td><span class="badge ${badge}">${badgeText}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  showTab('resultats');
+  toast(`✅ Rapprochement terminé : ${RESULTS.length} lignes`);
+}
+
+function fmt(n) {
+  return Number(n).toLocaleString('fr-FR', {maximumFractionDigits:0});
+}
+
+// ==================== SAMPLE DATA ====================
+function loadSample() {
+  document.getElementById('src1text').value = `PO-28127\tDDP APPRO DEPOT ANANI\t2025-09-11\t50\t3900000
+PO-28128\tDDP APPRO DEPOT ANANI\t2025-09-11\t30\t2340000
+10/07/2025 DDP MAN / BC N°25397 15 3400001
+05/08/2025 DDP GAGNOA / BC N°PO-26204 25 3940000
+06/08/2025 FACTURE-2024-001 10 125000`;
+
+  document.getElementById('src2text').value = `PO-28127 2025-09-11 50 3900000
+PO-28128 2025-09-11 30 2340000
+PO-25397 2025-07-10 15 3400000
+PO-26204 2025-08-05 25 3940000
+FACTURE-2024-001 2025-08-06 10 125000`;
+
+  toast('📋 Données test chargées !');
+}
+
+function clearAll() {
+  document.getElementById('src1text').value = '';
+  document.getElementById('src2text').value = '';
+  ['dmin1','dmax1','ref1','dmin2','dmax2','ref2'].forEach(id => document.getElementById(id).value='');
+  RESULTS = [];
+  document.getElementById('resultsBody').innerHTML = '<tr><td colspan="12"><div class="empty"><div class="icon">🔍</div>Lancez un rapprochement pour voir les résultats</div></td></tr>';
+  ['s-total','s-ok','s-diff','s-miss'].forEach(id => document.getElementById(id).textContent='0');
+  toast('🗑️ Tout effacé');
+}
+
+// ==================== IMPORT CSV/EXCEL (basic) ====================
+function importFile(num) {
+  const input = document.getElementById('file'+num);
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text = e.target.result;
+      // CSV basic
+      const lines = text.split('\n').slice(1).filter(l => l.trim());
+      const formatted = lines.map(l => l.replace(/\t/g,'\t')).join('\n');
+      document.getElementById('src'+num+'text').value = formatted;
+      toast(`✅ Fichier importé : ${lines.length} lignes`);
+    } catch(err) {
+      toast('❌ Erreur import : '+err.message);
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+// ==================== EXPORT CSV ====================
+function exportCSV() {
+  if (!RESULTS.length) { toast('⚠️ Aucun résultat'); return; }
+  const headers = ['Code','Source','Description','Date S1','Date S2','Qté S1','Qté S2','Montant S1','Montant S2','Écart','Similarité','Statut'];
+  const rows = RESULTS.map(r => [
+    r.code, r.source, '"'+r.description.replace(/"/g,'""')+'"',
+    r.date1, r.date2, r.qty1, r.qty2, r.amt1, r.amt2,
+    r.diff, r.sim.toFixed(1)+'%', r.status
+  ].join(';'));
+  const csv = [headers.join(';'), ...rows].join('\n');
+  download('rapprochement.csv', 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv));
+  toast('✅ CSV exporté !');
+}
+
+// ==================== EXPORT EXCEL (HTML table trick) ====================
+function exportExcel() {
+  if (!RESULTS.length) { toast('⚠️ Aucun résultat'); return; }
+  const headers = ['Code','Source','Description','Date S1','Date S2','Qté S1','Qté S2','Montant S1','Montant S2','Écart','Similarité%','Statut'];
+  let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+<head><meta charset="UTF-8">
+<style>
+th{background:#366092;color:white;font-weight:bold;padding:6px;}
+.ok{background:#C6EFCE;}
+.diff{background:#FFEB9C;}
+.miss{background:#FFC7CE;}
+td{padding:5px;border:1px solid #ddd;}
+</style></head><body><table>
+<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+
+  for (const r of RESULTS) {
+    const cls = r.type === 'ok' ? 'ok' : r.type === 'diff' ? 'diff' : 'miss';
+    html += `<tr class="${cls}">
+      <td>${r.code}</td><td>${r.source}</td><td>${r.description}</td>
+      <td>${r.date1}</td><td>${r.date2}</td>
+      <td>${r.qty1}</td><td>${r.qty2}</td>
+      <td>${r.amt1}</td><td>${r.amt2}</td>
+      <td>${r.diff}</td><td>${r.sim.toFixed(1)}</td>
+      <td>${r.status}</td></tr>`;
+  }
+  html += '</table></body></html>';
+  download('rapprochement.xls', 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(html));
+  toast('✅ Excel exporté !');
+}
+
+function download(filename, dataUrl) {
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = filename;
+  a.click();
+}
+</script>
+</body>
+</html>
